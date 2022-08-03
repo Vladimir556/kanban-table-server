@@ -1,9 +1,18 @@
-const express = require('express')
+
+
+const express = require('express');
+const cors = require('cors');
+
+const sequelize = require('./db');
+const models = require('./models/models');
+const router = require('./routes/routes');
+const errorHandler = require('./middleware/ErrorHandlingMiddleware');
+
+const PORT = process.env.PORT || 5000;
+
 const app = express()
 const WSServer = require('express-ws')(app)
 const aWss = WSServer.getWss()
-const PORT = process.env.PORT || 5000
-const cors = require('cors')
 
 let users = [
     {username: 'admin@gmail.com', pass: 'test123456'},
@@ -11,9 +20,11 @@ let users = [
 
 ]
 let kanbanData = {}
+
 app.use(cors())
 app.use(express.json())
 
+app.use('/api', router)
 
 app.ws('/', (ws, req) => {
     ws.send("Подключено успешно")

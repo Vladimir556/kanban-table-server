@@ -67,15 +67,18 @@ Account.hasMany(User, {onDelete: 'cascade'});
 User.belongsTo(Account);
 //  User
 User.hasMany(Card);
+User.belongsTo(Room);
 User.belongsToMany(Room, {through:RoomUser});
 User.belongsToMany(Role, {through:UserRole});
 //  Role
-Role.hasMany(Permisson);
+// Role.hasMany(Permisson);
 Role.belongsToMany(User, {through: UserRole});
+Role.belongsTo(Room);
 // Permisson
 Permisson.belongsTo(Role);
 //  Room
 Room.hasMany(Kanban);
+Room.hasMany(Role);
 Room.belongsToMany(User, {through: RoomUser});
 //  Kanban
 Kanban.hasMany(Column);
