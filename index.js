@@ -1,4 +1,8 @@
 const express = require('express')
+
+const sequelize = require('./db')
+const models = require('./models/models');
+
 const app = express()
 const WSServer = require('express-ws')(app)
 const aWss = WSServer.getWss()
@@ -19,7 +23,7 @@ app.ws('/', (ws, req) => {
     ws.send("Подключено успешно")
     ws.on('message', (msg) => {
         msg = JSON.parse(msg)
-        
+
         switch (msg.method) {
             case "connection":
                 connectionHandler(ws, msg)
@@ -31,9 +35,9 @@ app.ws('/', (ws, req) => {
                 broadcastConnection(ws,msg)
                 break
         }
-        
+
     })
-    
+
 })
 
 app.post('/registr', (req,res) => {
@@ -79,7 +83,7 @@ app.get('/getKanban', (req,res) => {
     }
 })
 
-app.listen(PORT, () => console.log(`server started on PORT ${PORT}`))
+
 
 const connectionHandler = (ws, msg) => {
     ws.id = msg.id
@@ -103,3 +107,22 @@ const isContains = (arrObj, obj) => {
     })
     return result
 }
+
+const start = async () => {
+  try {
+    await sequelize.authenticate()
+    await sequelize.sync({alter: true})
+
+    /*
+      В случае изменения модели {alter: true} вносит изменения в существующие таблицы
+      {force: true} - пересоздаёт таблицы заново
+      sequelize.sync() - создаёт таблицы, если они не существуют
+		*/
+
+    app.listen(PORT, () => console.log(`server started on PORT ${PORT}`))
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+start()
