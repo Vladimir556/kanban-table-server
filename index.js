@@ -1,6 +1,7 @@
 const express = require('express')
+
 const sequelize = require('./db')
-const path = require('path')
+const models = require('./models/models');
 
 const app = express()
 const WSServer = require('express-ws')(app)
